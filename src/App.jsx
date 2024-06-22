@@ -1,3 +1,24 @@
+import VehicleCreate from "./routes/admin/vehicle/VehicleCreate.jsx";
+import VehicleEdit from "./routes/admin/vehicle/VehicleEdit.jsx";
+import VehicleView from "./routes/admin/vehicle/VehicleView.jsx";
+import VehicleList from "./routes/admin/vehicle/VehicleList.jsx";
+import ScanCreate from "./routes/admin/scan/ScanCreate.jsx";
+import ScanEdit from "./routes/admin/scan/ScanEdit.jsx";
+import ScanView from "./routes/admin/scan/ScanView.jsx";
+import ScanList from "./routes/admin/scan/ScanList.jsx";
+import LocationLogCreate from "./routes/admin/location_log/LocationLogCreate.jsx";
+import LocationLogEdit from "./routes/admin/location_log/LocationLogEdit.jsx";
+import LocationLogView from "./routes/admin/location_log/LocationLogView.jsx";
+import LocationLogList from "./routes/admin/location_log/LocationLogList.jsx";
+import DepotCreate from "./routes/admin/depot/DepotCreate.jsx";
+import DepotEdit from "./routes/admin/depot/DepotEdit.jsx";
+import DepotView from "./routes/admin/depot/DepotView.jsx";
+import DepotList from "./routes/admin/depot/DepotList.jsx";
+import PalletCreate from "./routes/admin/pallet/PalletCreate.jsx";
+import PalletEdit from "./routes/admin/pallet/PalletEdit.jsx";
+import PalletView from "./routes/admin/pallet/PalletView.jsx";
+import PalletList from "./routes/admin/pallet/PalletList.jsx";
+import SynoviaLayout from "./components/layouts/SynoviaLayout.jsx";
 import CronCreate from "./routes/admin/cron/CronCreate.jsx";
 import CronEdit from "./routes/admin/cron/CronEdit.jsx";
 import CronView from "./routes/admin/cron/CronView.jsx";
@@ -87,10 +108,27 @@ function App() {
                         <Route path="/smtp-settings" element={<SMTPSettings/>}/>
                     </Route>
 
-                    <Route element={<TrackingLayout/>}>
-                        <Route path="/tracking_sessions" element={<TrackingSessionList/>}/>
-                        <Route path="/tracking_sessions/:id" element={<TrackingSessionView/>}/>
-                        <Route path="/tracking_overview" element={<TrackingOverview/>}/>
+                    <Route element={<SynoviaLayout/>}>
+                        <Route path="/pallets" element={<PalletList/>}/>
+                        <Route path="/pallets/create" element={<PalletCreate/>}/>
+                        <Route path="/pallets/:id/edit" element={<PalletEdit/>}/>
+                        <Route path="/pallets/:id" element={<PalletView/>}/>
+                        <Route path="/depots" element={<DepotList/>}/>
+                        <Route path="/depots/create" element={<DepotCreate/>}/>
+                        <Route path="/depots/:id/edit" element={<DepotEdit/>}/>
+                        <Route path="/depots/:id" element={<DepotView/>}/>
+                        <Route path="/location_logs" element={<LocationLogList/>}/>
+                        <Route path="/location_logs/create" element={<LocationLogCreate/>}/>
+                        <Route path="/location_logs/:id/edit" element={<LocationLogEdit/>}/>
+                        <Route path="/location_logs/:id" element={<LocationLogView/>}/>
+                        <Route path="/scans" element={<ScanList/>}/>
+                        <Route path="/scans/create" element={<ScanCreate/>}/>
+                        <Route path="/scans/:id/edit" element={<ScanEdit/>}/>
+                        <Route path="/scans/:id" element={<ScanView/>}/>
+                        <Route path="/vehicles" element={<VehicleList/>}/>
+                        <Route path="/vehicles/create" element={<VehicleCreate/>}/>
+                        <Route path="/vehicles/:id/edit" element={<VehicleEdit/>}/>
+                        <Route path="/vehicles/:id" element={<VehicleView/>}/>
                     </Route>
                 </Route>
             </Routes>

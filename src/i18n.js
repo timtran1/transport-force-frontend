@@ -23,7 +23,7 @@ i18n
     // init i18next
     // for all options read: https://www.i18next.com/overview/configuration-options
     .init({
-        // lng: 'en',
+        lng: 'en',
         // fallbackLng: 'en',
         // debug: true,
 
@@ -32,9 +32,9 @@ i18n
         },
 
         // use this to turn on CMS translations
-        backend: {
-            loadPath: `${backendHost}/site_content/{{ns}}/{{lng}}.json`,
-        },
+        // backend: {
+        //     loadPath: `${backendHost}/site_content/{{ns}}/{{lng}}.json`,
+        // },
     });
 
 

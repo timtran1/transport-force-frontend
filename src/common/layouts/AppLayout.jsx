@@ -199,7 +199,7 @@ export default function AppLayout(props) {
                                     : user
                             ) ? (
                                 <>
-                                    <LangSwitcher/>
+                                    {/*<LangSwitcher/>*/}
 
                                     {/*notifications dropdown   */}
                                     <Menu shadow="md" width={300}>

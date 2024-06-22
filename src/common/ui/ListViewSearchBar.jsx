@@ -430,49 +430,49 @@ export default function ListViewSearchBar(props) {
                 </div>
 
                 <div className={`flex items-end gap-1`}>
-                    <Group justify="center">
-                        <FileButton onChange={uploadFile} accept=".csv">
-                            {props =>
-                                <MantineButton
-                                    {...props}
-                                    size={`xs`}
-                                    variant={`outline`}
-                                    className={`shadow`}
-                                >
-                                    <FontAwesomeIcon icon={faArrowUpFromBracket}/>
-                                </MantineButton>}
-                        </FileButton>
-                    </Group>
+                    {/*<Group justify="center">*/}
+                    {/*    <FileButton onChange={uploadFile} accept=".csv">*/}
+                    {/*        {props =>*/}
+                    {/*            <MantineButton*/}
+                    {/*                {...props}*/}
+                    {/*                size={`xs`}*/}
+                    {/*                variant={`outline`}*/}
+                    {/*                className={`shadow`}*/}
+                    {/*            >*/}
+                    {/*                <FontAwesomeIcon icon={faArrowUpFromBracket}/>*/}
+                    {/*            </MantineButton>}*/}
+                    {/*    </FileButton>*/}
+                    {/*</Group>*/}
 
 
                     {/*Export*/}
-                    <Menu shadow="md" width={200}>
-                        <Menu.Target>
-                            <Tooltip label="Export" withArrow>
-                                <MantineButton
-                                    size={`xs`}
-                                    variant={`outline`}
-                                    className={`shadow`}
-                                >
-                                    <FontAwesomeIcon icon={faFileArrowDown}/>
-                                </MantineButton>
-                            </Tooltip>
-                        </Menu.Target>
+                    {/*<Menu shadow="md" width={200}>*/}
+                    {/*    <Menu.Target>*/}
+                    {/*        <Tooltip label="Export" withArrow>*/}
+                    {/*            <MantineButton*/}
+                    {/*                size={`xs`}*/}
+                    {/*                variant={`outline`}*/}
+                    {/*                className={`shadow`}*/}
+                    {/*            >*/}
+                    {/*                <FontAwesomeIcon icon={faFileArrowDown}/>*/}
+                    {/*            </MantineButton>*/}
+                    {/*        </Tooltip>*/}
+                    {/*    </Menu.Target>*/}
 
-                        <Menu.Dropdown>
-                            <Menu.Label>Export</Menu.Label>
-                            <a>
-                                <Menu.Item onClick={downloadAllRows}>
-                                    All results
-                                </Menu.Item>
-                            </a>
-                            <a>
-                                <Menu.Item onClick={downloadSelectedRows}>
-                                    Selected rows
-                                </Menu.Item>
-                            </a>
-                        </Menu.Dropdown>
-                    </Menu>
+                    {/*    <Menu.Dropdown>*/}
+                    {/*        <Menu.Label>Export</Menu.Label>*/}
+                    {/*        <a>*/}
+                    {/*            <Menu.Item onClick={downloadAllRows}>*/}
+                    {/*                All results*/}
+                    {/*            </Menu.Item>*/}
+                    {/*        </a>*/}
+                    {/*        <a>*/}
+                    {/*            <Menu.Item onClick={downloadSelectedRows}>*/}
+                    {/*                Selected rows*/}
+                    {/*            </Menu.Item>*/}
+                    {/*        </a>*/}
+                    {/*    </Menu.Dropdown>*/}
+                    {/*</Menu>*/}
 
                     <MantineButton onClick={() => get()} size={`xs`} variant={`outline`} className={`shadow`}>
                         <FontAwesomeIcon icon={faArrowsRotate}/>

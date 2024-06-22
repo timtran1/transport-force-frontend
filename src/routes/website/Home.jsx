@@ -1,11 +1,15 @@
 import {useEffect, useState} from 'react';
 import {Html5QrcodeScanner, Html5QrcodeSupportedFormats} from "html5-qrcode";
+import useModel from "../../common/api/useModel.jsx";
 
 export default function Home() {
     const [cleared, setCleared] = useState(false);
     const [result, setResult] = useState(null);
     const [type, setType] = useState('');
     const [html5QrcodeScanner, setHtml5QrcodeScanner] = useState(null);
+    const {
+        getOne: getPallet,
+    } = useModel('pallet');
 
     useEffect(() => {
         render_scan_qr();
@@ -17,6 +21,21 @@ export default function Home() {
 
         const onScanSuccess = async (decodedText, decodedResult) => {
             console.log(`Code matched = ${decodedText}`, decodedResult);
+            if (decodedText.startsWith('pallet-')) {
+                const palletId = parseInt(decodedText.split('-')[1])
+                console.log({palletId});
+                // const pallet = await getPallet(palletId);
+                // if (pallet) {
+                //     setResult(pallet);
+                //     setType('pallet');
+                // } else {
+                //     alert('Not found!');
+                // }
+            }
+
+            console.log('clearing');
+            html5QrcodeScanner.clear();
+            setCleared(true);
 
             // try {
             //     console.log('clearing');
@@ -67,7 +86,6 @@ export default function Home() {
                 <h1>Scan QR Code</h1>
             </header>
             <div id="reader" style={{width: '300px'}}></div>
-            {result && <InfoDisplay object={result} type={type}/>}
             <div>
                 {cleared && <button onClick={render_scan_qr}>Scan another</button>}
             </div>
