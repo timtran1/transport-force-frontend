@@ -42,9 +42,9 @@ export default function WebsiteLayout() {
             navbar={{width: 300, breakpoint: 'sm', collapsed: {desktop: true, mobile: !opened}}}
             padding="md"
         >
-            <AppShell.Header>
-                <WebsiteHeader opened={opened} toggle={toggle} links={links}/>
-            </AppShell.Header>
+            {/*<AppShell.Header>*/}
+            {/*    <WebsiteHeader opened={opened} toggle={toggle} links={links}/>*/}
+            {/*</AppShell.Header>*/}
             <AppShell.Navbar p="md">
                 {links.map((link, index) => (
                     <Link to={link.path} key={index} onClick={() => {if (opened) toggle()}}>
@@ -59,9 +59,9 @@ export default function WebsiteLayout() {
                 <Outlet/>
             </AppShell.Main>
 
-            <AppShell.Footer>
-                <WebsiteFooter links={links}/>
-            </AppShell.Footer>
+            {/*<AppShell.Footer>*/}
+            {/*    <WebsiteFooter links={links}/>*/}
+            {/*</AppShell.Footer>*/}
 
             <Notification/>
         </AppShell>
