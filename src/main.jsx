@@ -22,7 +22,7 @@ import '@mantine/dates/styles.css';
 import '@mantine/tiptap/styles.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
+    // <React.StrictMode>
         <MantineProvider theme={mantineTheme}>
             <ModalsProvider>
                 <MuiThemeProvider theme={muiTheme}>
@@ -30,5 +30,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 </MuiThemeProvider>
             </ModalsProvider>
         </MantineProvider>
-    </React.StrictMode>,
+    // </React.StrictMode>,
 )

@@ -5,3 +5,33 @@
 * {
     font-family: Inter, Helvetica, Arial, sans-serif;
 }
+
+#html5-qrcode-button-camera-start {
+    background-color: #2563EB;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+#html5-qrcode-anchor-scan-type-change {
+    background-color: #ccc;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#html5-qrcode-button-camera-stop {
+    background-color: #2563EB;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+}

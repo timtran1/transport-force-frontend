@@ -37,7 +37,7 @@ import SiteContentList from "./routes/admin/site_content/SiteContentList.jsx";
 import CMSLayout from "./components/layouts/CMSLayout.jsx";
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import WebsiteLayout from "./components/layouts/WebsiteLayout.jsx";
-import Home from "./routes/website/Home.jsx";
+import Scan from "./routes/website/Scan.jsx";
 import NotFound404 from "./routes/website/NotFound404.jsx";
 import RequireAuth from "./common/auth/RequireAuth.jsx";
 import PublicAuth from "./common/auth/PublicAuth.jsx";
@@ -65,7 +65,6 @@ function App() {
             <Routes>
                 <Route element={<PublicAuth/>}>
                     <Route element={<WebsiteLayout/>}>
-                        <Route path="/" element={<Home/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/reset-password-confirmation/:token" element={<ResetPasswordConfirmation/>}/>
                         <Route path="/reset-password" element={<ResetPassword/>}/>
@@ -76,6 +75,8 @@ function App() {
 
 
                 <Route element={<RequireAuth/>}>
+                    <Route path="/scan" element={<Scan/>}/>
+
                     <Route element={<CMSLayout/>}>
                         <Route path="/theme_translations" element={<SiteContentList/>}/>
                         {/*<Route path="/theme_translations/create" element={<SiteContentCreate />}/>*/}

@@ -11,12 +11,17 @@ import H2 from "../../../common/ui/H2.jsx";
 import {useTranslation} from "react-i18next";
 import FileDisplay from "../../../common/ui/FileDisplay.jsx";
 import RecordDisplay from "../../../common/ui/RecordDisplay.jsx";
+import {getAttachmentUrl} from "../../../common/utils/index.js";
+import BackendHostURLState from "../../../common/stores/BackendHostURLState.js";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faDownload} from "@fortawesome/free-solid-svg-icons";
 
 export default function PalletView() {
     const {t} = useTranslation()
     const {id} = useParams()
     const query = useModel('pallet', {id, autoFetch: true})
     const {record} = query
+    const {backendHost} = BackendHostURLState(state => state)
 
     return (
         <main className={`max-w-screen-xl m-auto my-[50px] px-[24px]`}>
@@ -48,7 +53,7 @@ export default function PalletView() {
                             />
                         </div>
 
-                        <div className={`flex gap-4 my-4 flex-wrap`}>
+                        <div className={`flex flex-col gap-4 my-4 flex-wrap`}>
                             <FileDisplay
                                 width={200}
                                 height={200}
@@ -56,6 +61,17 @@ export default function PalletView() {
                                 type="image"
                                 src={record.barcode?.name}
                             />
+                            {record.barcode?.name &&
+                                <div>
+                                    <a href={getAttachmentUrl(backendHost, record.barcode?.name)}
+                                       download={record.barcode?.name}
+                                       className={`bg-primary-main text-white text-sm px-4 py-2 rounded-md`}
+                                    >
+                                        <FontAwesomeIcon icon={faDownload} className={`mr-2`}/>
+                                        Download
+                                    </a>
+                                </div>
+                            }
                         </div>
 
                         <div className={`my-6 overflow-y-auto`}>
