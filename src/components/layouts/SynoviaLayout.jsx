@@ -29,11 +29,11 @@ const navbarLinks = [
         to: '/location_logs',
         icon: faLocationDot,
     },
-    {
-        label: 'Scans',
-        to: '/scans',
-        icon: faExpand,
-    },
+    // {
+    //     label: 'Scans',
+    //     to: '/scans',
+    //     icon: faExpand,
+    // },
 ]
 
 export default function SynoviaLayout() {

@@ -15,7 +15,7 @@ export default function RecordDisplay({label, value, linkTo, children, ...others
             </div>
             <Link
                 to={linkTo}
-                className="cursor-pointer text-primary-main"
+                className="cursor-pointer text-blue-700"
                 style={{
                     fontSize: `var(--mantine-font-size-sm)`,
                 }}

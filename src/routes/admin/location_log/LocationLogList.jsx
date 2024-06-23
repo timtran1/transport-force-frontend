@@ -11,7 +11,8 @@ import ListViewSearchBar from "../../../common/ui/ListViewSearchBar.jsx";
 import ListViewPagination from "../../../common/ui/ListViewPagination.jsx";
 import ListViewSkeleton from "../../../common/ui/ListViewSkeleton.jsx";
 import NumberFormatter from "../../../common/ui/NumberFormatter.jsx";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
+import dayjs from "dayjs";
 
 export default function LocationLogList() {
     const {t} = useTranslation()
@@ -28,12 +29,12 @@ export default function LocationLogList() {
         <main className={`max-w-screen-xl m-auto my-[50px] px-[12px] sm:px-[24px]`}>
             <div className={`flex w-full justify-between gap-2`}>
                 <h1 className={`text-[36px] font-[700] text-2xl text-pr`}>{t("Location Logs")}</h1>
-                <Link to={`/location_logs/create`}>
-                    <Button className={`shadow bg-primary-main text-primary-contrastText`} color={`primary`}>
-                        <FontAwesomeIcon icon={faPlus} className="sm:mr-1 h-4 w-4"/> <span
-                        className={`hidden sm:inline`}>{t("Create Location Log")}</span>
-                    </Button>
-                </Link>
+                {/*<Link to={`/location_logs/create`}>*/}
+                {/*    <Button className={`shadow bg-primary-main text-primary-contrastText`} color={`primary`}>*/}
+                {/*        <FontAwesomeIcon icon={faPlus} className="sm:mr-1 h-4 w-4"/> <span*/}
+                {/*        className={`hidden sm:inline`}>{t("Create Location Log")}</span>*/}
+                {/*    </Button>*/}
+                {/*</Link>*/}
             </div>
 
             <ListViewSearchBar query={query} selectedRows={selectedRows} setSelectedRows={setSelectedRows}/>
@@ -64,6 +65,8 @@ export default function LocationLogList() {
                                         }
                                     />
                                 </Table.Th>
+                                <Table.Th>{t("Time")}</Table.Th>
+                                <Table.Th>{t("User")}</Table.Th>
                                 <Table.Th>{t("Latitude")}</Table.Th>
                                 <Table.Th>{t("Longitude")}</Table.Th>
                             </Table.Tr>
@@ -86,6 +89,12 @@ export default function LocationLogList() {
                                                 )
                                             }
                                         />
+                                    </Table.Td>
+                                    <Table.Td>
+                                        {dayjs.utc(item.created_at).local().format('DD/MM/YYYY (HH:mm)')}
+                                    </Table.Td>
+                                    <Table.Td>
+                                        {item.owner?.name || item.owner?.username}
                                     </Table.Td>
                                     <Table.Td>
                                         <NumberFormatter

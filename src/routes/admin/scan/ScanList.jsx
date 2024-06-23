@@ -28,12 +28,12 @@ export default function ScanList() {
         <main className={`max-w-screen-xl m-auto my-[50px] px-[12px] sm:px-[24px]`}>
             <div className={`flex w-full justify-between gap-2`}>
                 <h1 className={`text-[36px] font-[700] text-2xl text-pr`}>{t("Scans")}</h1>
-                <Link to={`/scans/create`}>
-                    <Button className={`shadow bg-primary-main text-primary-contrastText`} color={`primary`}>
-                        <FontAwesomeIcon icon={faPlus} className="sm:mr-1 h-4 w-4"/> <span
-                        className={`hidden sm:inline`}>{t("Create Scan")}</span>
-                    </Button>
-                </Link>
+                {/*<Link to={`/scans/create`}>*/}
+                {/*    <Button className={`shadow bg-primary-main text-primary-contrastText`} color={`primary`}>*/}
+                {/*        <FontAwesomeIcon icon={faPlus} className="sm:mr-1 h-4 w-4"/> <span*/}
+                {/*        className={`hidden sm:inline`}>{t("Create Scan")}</span>*/}
+                {/*    </Button>*/}
+                {/*</Link>*/}
             </div>
 
             <ListViewSearchBar query={query} selectedRows={selectedRows} setSelectedRows={setSelectedRows}/>

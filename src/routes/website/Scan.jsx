@@ -23,6 +23,7 @@ export default function Scan() {
 
     const {getOne: getPallet} = useModel('pallet');
     const {create: createScan} = useModel('scan');
+    const {create: createLocationLog} = useModel('location_log');
 
     const [record, setRecord] = useState({
         scan_type: "Load",
@@ -36,25 +37,54 @@ export default function Scan() {
         depot_id: null,
     })
 
+    // location pings
     useEffect(() => {
         if (navigator.geolocation) {
-            console.log("Geolocation is supported by this browser.");
-            navigator.geolocation.getCurrentPosition((position) => {
-                console.log('HERE');
-                const {latitude, longitude} = position.coords;
-                console.log({latitude, longitude});
-                setRecord({...record, latitude: latitude, longitude: longitude});
-            }, (error) => {
-                console.log('HERE2');
-                console.error("Error occurred while getting location", error);
-            });
-            console.log('HERE3');
+            const getLocationAndLog = async () => {
+                navigator.geolocation.getCurrentPosition(
+                    async position => {
+                        const {latitude, longitude} = position.coords;
+                        console.log({latitude, longitude});
+                        setRecord({...record, latitude: latitude, longitude: longitude});
+                        await createLocationLog({latitude, longitude});
+                        notify({
+                            message: 'Location log sent',
+                            type: 'info'
+                        });
+                    },
+                    error => {
+                        console.error("Error occurred while getting location", error);
+                    }
+                );
+            };
+
+            // Run it first thing
+            getLocationAndLog();
+
+            // Then set up the interval
+            const intervalId = setInterval(getLocationAndLog, 600000); // 600000ms = 10 minutes
+
+            // Clear interval on component unmount
+            return () => clearInterval(intervalId);
         } else {
             console.log("Geolocation is not supported by this browser.");
         }
     }, []);
 
-    const render_scan_qr = async () => {
+
+    async function handleSubmit(e) {
+        try {
+            e.preventDefault()
+            const created = await createScan(record)
+            notify({message: t('Scan submitted successfully!'), type: 'success'})
+            setScannedPallet(null);
+        } catch (error) {
+            console.error(error)
+            notify({message: error.message, type: 'error'})
+        }
+    }
+
+    async function renderScanner() {
         setCleared(false);
 
         let scanner = new Html5QrcodeScanner(
@@ -95,16 +125,16 @@ export default function Scan() {
         await scanner.render(onScanSuccess, onScanFailure);
 
         setHtml5QrcodeScanner(scanner);
-    };
+    }
 
     return (
-        <form className={`px-[24px] pt-[24px] max-w-screen-sm`}>
+        <form className={`px-[24px] pt-[24px] max-w-screen-sm`} onSubmit={handleSubmit}>
             <H1>{t("Scan")}</H1>
             <div id="reader" className={`mx-auto`} style={{width: '300px'}}></div>
             <div>
                 {cleared &&
                     <button className={`bg-blue-600 px-4 py-2 font-semibold rounded-lg text-white`}
-                            onClick={render_scan_qr}>
+                            onClick={renderScanner}>
                         Start scanning
                     </button>}
             </div>
@@ -145,21 +175,25 @@ export default function Scan() {
                     />
                 </div>
 
-                <div className={`flex gap-2`}>
-                    <TextInput
-                        className={``}
-                        label={t("Foo")}
-                        placeholder={t("Enter Foo")}
-                        value={record.foo}
-                        onChange={e => setRecord({...record, foo: e.target.value})}
-                    />
-                    <TextInput
-                        label={t("Bar")}
-                        placeholder={t("Enter Bar")}
-                        value={record.bar}
-                        onChange={e => setRecord({...record, bar: e.target.value})}
-                    />
-                </div>
+
+                <RecordSelect
+                    model="vehicle"
+                    displayField="name"
+                    searchFields={['name']}
+                    label={t("Vehicle")}
+                    placeholder={t("Select a Vehicle")}
+                    value={record.vehicle_id}
+                    onChange={value => setRecord({...record, vehicle_id: value})}
+                />
+                <RecordSelect
+                    model="depot"
+                    displayField="name"
+                    searchFields={['name']}
+                    label={t("Depot")}
+                    placeholder={t("Select a Depot")}
+                    value={record.depot_id}
+                    onChange={value => setRecord({...record, depot_id: value})}
+                />
 
 
                 <TextArea

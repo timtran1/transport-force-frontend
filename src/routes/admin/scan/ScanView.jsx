@@ -5,7 +5,7 @@ import {useParams} from "react-router-dom";
 import ReadOnlyField from "../../../common/ui/ReadOnlyField.jsx";
 import ViewFormActionBar from "../../../common/ui/ViewFormActionBar.jsx";
 import FormViewSkeleton from "../../../common/ui/FormViewSkeleton.jsx";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import RecordDisplay from "../../../common/ui/RecordDisplay.jsx";
 
 export default function ScanView() {
@@ -40,21 +40,20 @@ export default function ScanView() {
                                 label={t("Longitude")}
                                 value={record.longitude}
                             />
-                            <ReadOnlyField
-                                label={t("Foo")}
-                                value={record.foo}
+                            <RecordDisplay
+                                label={t("Vehicle")}
+                                linkTo={`/vehicles/${record.owner?.id}`}
+                                value={record.vehicle?.name}
                             />
-                            <ReadOnlyField
-                                label={t("Bar")}
-                                value={record.bar}
+                            <RecordDisplay
+                                label={t("Depot")}
+                                linkTo={`/depots/${record.owner?.id}`}
+                                value={record.depot?.name}
                             />
                             <ReadOnlyField
                                 label={t("Notes")}
                                 value={record.notes}
                             />
-
-
-
                         </div>
 
                     </Card>

@@ -1,11 +1,11 @@
 import {useTranslation} from "react-i18next";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAddressBook, faFingerprint} from "@fortawesome/free-solid-svg-icons";
+import {faAddressBook, faFingerprint, faMapLocationDot} from "@fortawesome/free-solid-svg-icons";
 import Card from "../../../common/ui/Card.jsx";
 import Divider from "../../../common/ui/Divider.jsx";
 import H1 from "../../../common/ui/H1.jsx";
 import H3 from "../../../common/ui/H3.jsx";
-import {Tabs} from "@mantine/core";
+import {Table, Tabs} from "@mantine/core";
 import useModel from "../../../common/api/useModel.jsx";
 import {useParams} from "react-router-dom";
 import ReadOnlyField from "../../../common/ui/ReadOnlyField.jsx";
@@ -13,6 +13,8 @@ import Chip from "../../../common/ui/Chip.jsx";
 import ViewFormActionBar from "../../../common/ui/ViewFormActionBar.jsx";
 import FormViewSkeleton from "../../../common/ui/FormViewSkeleton.jsx";
 import FileDisplay from "../../../common/ui/FileDisplay.jsx";
+import RecordDisplay from "../../../common/ui/RecordDisplay.jsx";
+import dayjs from "dayjs";
 
 export default function UserView() {
     const {t} = useTranslation();
@@ -79,6 +81,17 @@ export default function UserView() {
                                 }
                             >
                                 {t("Access")}
+                            </Tabs.Tab>
+                            <Tabs.Tab
+                                value="location_logs"
+                                leftSection={
+                                    <FontAwesomeIcon
+                                        icon={faMapLocationDot}
+                                        className="h-4 w-4 "
+                                    />
+                                }
+                            >
+                                {t("Location Pings")}
                             </Tabs.Tab>
                         </Tabs.List>
 
@@ -183,6 +196,34 @@ export default function UserView() {
                                     src={record.cv?.name}
                                 />
                             </div>
+                        </Tabs.Panel>
+
+                        <Tabs.Panel value="location_logs">
+                            <Table className={`mt-2`}>
+                                <Table.Thead>
+                                    <Table.Tr>
+                                        <Table.Th>{t("Time")}</Table.Th>
+                                        <Table.Th>{t("Location")}</Table.Th>
+                                    </Table.Tr>
+                                </Table.Thead>
+                                <Table.Tbody>
+                                    {record?.location_logs.map((item, index) =>
+                                        <Table.Tr key={index}>
+                                            <Table.Td>
+                                                {dayjs.utc(item.created_at).local().format("DD/MM/YYYY (HH:mm)")}
+                                            </Table.Td>
+                                            <Table.Td>
+                                                <a href={`https://maps.google.com/?q=${item?.latitude},${item?.longitude}`}
+                                                   target="_blank" rel="noopener noreferrer"
+                                                   className={`text-sm  rounded py-2 px-4`}>
+                                                    <FontAwesomeIcon icon={faMapLocationDot} className={`mr-2`}/>
+                                                    Open in Google Maps
+                                                </a>
+                                            </Table.Td>
+                                        </Table.Tr>
+                                    )}
+                                </Table.Tbody>
+                            </Table>
                         </Tabs.Panel>
                     </Tabs>
                 </Card>

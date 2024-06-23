@@ -33,7 +33,7 @@ export default function TrackingSessionView() {
                         <H1>{t("Tracking Session")}</H1>
                         <div className={`flex gap-4 my-4 flex-wrap`}>
                             <ReadOnlyField label={t("Domain")} value={record.origin} />
-                            <ReadOnlyField label={t("User")} value={record.owner?.name || record.owner?.username} />
+                            <ReadOnlyField label={t("User")} value={record.owner?.name || record.owner?.usernamee} />
                         </div>
                         <div className={`flex gap-4 my-4 flex-wrap`}>
                             <ReadOnlyField

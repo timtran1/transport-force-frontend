@@ -14,7 +14,7 @@ import RecordDisplay from "../../../common/ui/RecordDisplay.jsx";
 import {getAttachmentUrl} from "../../../common/utils/index.js";
 import BackendHostURLState from "../../../common/stores/BackendHostURLState.js";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDownload} from "@fortawesome/free-solid-svg-icons";
+import {faDownload, faMapLocationDot} from "@fortawesome/free-solid-svg-icons";
 
 export default function PalletView() {
     const {t} = useTranslation()
@@ -81,11 +81,11 @@ export default function PalletView() {
                                 <Table.Thead>
                                     <Table.Tr>
                                         <Table.Th>{t("Scan Type")}</Table.Th>
-                                        <Table.Th>{t("Latitude")}</Table.Th>
-                                        <Table.Th>{t("Longitude")}</Table.Th>
-                                        <Table.Th>{t("Foo")}</Table.Th>
-                                        <Table.Th>{t("Bar")}</Table.Th>
+                                        <Table.Th>{t("Location")}</Table.Th>
                                         <Table.Th>{t("Notes")}</Table.Th>
+                                        <Table.Th>{t("Notes 2")}</Table.Th>
+                                        <Table.Th>{t("Even More Notes")}</Table.Th>
+                                        <Table.Th>{t("Notes Final")}</Table.Th>
                                         <Table.Th>{t("Vehicle")}</Table.Th>
                                         <Table.Th>{t("Depot")}</Table.Th>
                                     </Table.Tr>
@@ -97,19 +97,25 @@ export default function PalletView() {
                                                 {item.scan_type}
                                             </Table.Td>
                                             <Table.Td>
-                                                {item.latitude}
-                                            </Table.Td>
-                                            <Table.Td>
-                                                {item.longitude}
-                                            </Table.Td>
-                                            <Table.Td>
-                                                {item.foo}
-                                            </Table.Td>
-                                            <Table.Td>
-                                                {item.bar}
+                                                <a href={`https://maps.google.com/?q=${item?.latitude},${item?.longitude}`}
+                                                   target="_blank" rel="noopener noreferrer"
+                                                   className={`text-sm  rounded py-2 px-4`}>
+                                                    <FontAwesomeIcon icon={faMapLocationDot} className={`mr-2`}/>
+                                                    Open in Google Maps
+                                                </a>
                                             </Table.Td>
                                             <Table.Td>
                                                 {item.notes}
+                                            </Table.Td>
+                                            <Table.Td>
+                                                {item.notes2}
+
+                                            </Table.Td>
+                                            <Table.Td>
+                                                {item.even_more_notes}
+                                            </Table.Td>
+                                            <Table.Td>
+                                                {item.notes_final}
                                             </Table.Td>
                                             <Table.Td>
                                                 <RecordDisplay
@@ -118,7 +124,10 @@ export default function PalletView() {
                                                 />
                                             </Table.Td>
                                             <Table.Td>
-                                                {item.depot_id}
+                                                <RecordDisplay
+                                                    linkTo={`/depots/${item.depot?.id}`}
+                                                    value={item.depot?.name}
+                                                />
                                             </Table.Td>
                                         </Table.Tr>
                                     )}
