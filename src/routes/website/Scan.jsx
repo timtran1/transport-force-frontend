@@ -225,7 +225,7 @@ export default function Scan() {
                     onChange={e => setRecord({...record, notes_final: e.target.value})}
                 />
 
-                <Button type={`submit`}>Submit</Button>
+                <button type={`submit`} className={`bg-green-500 py-4 text-white rounded-lg font-bold`}>Submit Scan</button>
             </div>
             <Notification/>
         </form>
