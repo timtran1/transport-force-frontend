@@ -153,6 +153,79 @@ export default function useModel(modelName, options = {}) {
         }
     }
 
+     async function exportCSV(selectedRows = null) {
+        try {
+            setLoading(true);
+            let endpoint = `${backendHost}/${modelName}/export`
+            let query = _buildQueryBody()
+            if (selectedRows != null) {
+                query = {
+                    order_by: orderBy,
+                    search: {
+                        AND: [{
+                            field: "id",
+                            operator: "in",
+                            value: selectedRows.map(obj => obj.id)
+                        }],
+                        OR: []
+                    }
+                }
+            }
+            let headers = {'Content-Type': 'application/json'}
+            const tokenResult = await Preferences.get({key: 'token'})
+            if (tokenResult?.value) headers.Authorization = `Bearer ${tokenResult.value}`
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                body: JSON.stringify(query),
+                headers
+            })
+            if (response.status === 401) return resetAuth()
+            if (response.status !== 200) {
+                const {detail} = await response.json()
+                console.log(detail)
+                setError(detail)
+                throw new Error(detail)
+            }
+            const data = await response.blob()
+            setError(null)
+            return data
+
+        } finally {
+            setLoading(false)
+        }
+
+    }
+
+    async function importCSV(file) {
+        try {
+            setLoading(true)
+            const formData = new FormData();
+            formData.append('file', file)
+
+            let endpoint = `${backendHost}/${modelName}/import`
+            const tokenResult = await Preferences.get({key: 'token'})
+
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${tokenResult.value}`,
+                },
+                body: formData
+            })
+            if (res.status !== 200) {
+                const {detail} = await res.json()
+                setError(detail)
+                throw new Error(detail)
+            }
+
+            const resp = await res.json()
+            return resp
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
     async function create(newItem) {
         setLoading(true)
         // replace all date objects with ISO strings
@@ -251,30 +324,14 @@ export default function useModel(modelName, options = {}) {
 
     async function deleteWithConfirm(recordIds, callback = null, onErr = null) {
         setLoading(true)
-        const delCheckResults = await Promise.all(
-            recordIds.map(id =>
-                fetch(`${backendHost}/util/delete_check/${modelName}/${id}`, {
-                    headers: {Authorization: `Bearer ${user.token}`}
-                }).then(response => response.json())
-            ))
-
-        let toDelete = {}
-        let toSetNull = {}
-
-        delCheckResults.forEach(result => {
-            if (result.to_delete) {
-                for (let tableName in result.to_delete) {
-                    if (!toDelete.tableName) toDelete[tableName] = []
-                    toDelete[tableName] = [...toDelete[tableName], ...result.to_delete[tableName]]
-                }
-            }
-            if (result.to_set_null) {
-                for (let tableName in result.to_set_null) {
-                    if (!toSetNull.tableName) toSetNull[tableName] = []
-                    toSetNull[tableName] = [...toSetNull[tableName], ...result.to_set_null[tableName]]
-                }
-            }
+        const res = await fetch(`${backendHost}/util/delete_check/${modelName}/${recordIds.join(',')}`, {
+            headers: {Authorization: `Bearer ${user.token}`}
         })
+        const response = await res.json()
+
+        let toDelete = response.to_delete || {}
+        let toSetNull = response.to_set_null || {}
+
         setLoading(false)
 
         modals.openConfirmModal({
@@ -297,27 +354,29 @@ export default function useModel(modelName, options = {}) {
                 <div>
                     <div className={`mb-2`}>
                         {t(recordIds.length > 1 ?
-                            "Are you sure you want to delete this record?"
+                            "Are you sure you want to delete these records?"
                             :
-                            "Are you sure you want to delete these records?")}
+                            "Are you sure you want to delete this record?"
+                        )}
                         {/* Are you sure you want to delete {recordIds.length} record{recordIds.length > 1 ? 's' : ''}?
                         This action cannot be undone. */}
                     </div>
                     {Object.keys(toDelete).length > 0 || Object.keys(toSetNull).length > 0 ?
-                        <Alert color="red" title={<H2>WARNING</H2>} className={`mb-2`}>
+                        <Alert color="red" title={<H2>{t('WARNING')}</H2>} className={`mb-2`}>
                             <div>
-                                <div>Deleting this record will have the following cascading
-                                    effects:
+                                <div>{t('Deleting this record will have the following cascading effects:')}
                                 </div>
                                 {Object.keys(toDelete).map(tableName =>
                                     <div key={tableName}>
-                                        <div className={`font-semibold`}>Deleting from {tableName}:</div>
+                                        <div className={`font-semibold`}>{t('Deleting from: ')}{tableName}:</div>
                                         {toDelete[tableName].map(record => <div key={record}>{record}</div>)}
                                     </div>
                                 )}
                                 {Object.keys(toSetNull).map(tableName =>
                                     <div key={tableName}>
-                                        <div className={`font-semibold`}>Setting empty reference in {tableName}:</div>
+                                        <div
+                                            className={`font-semibold`}>{t('Setting empty reference in: ')}{tableName}:
+                                        </div>
                                         {toSetNull[tableName].map(record => <div key={record}>{record}</div>)}
                                     </div>
                                 )}
@@ -349,7 +408,7 @@ export default function useModel(modelName, options = {}) {
                 },
                 body: formData
             })
-            if (!res.status === 200) {
+            if (res.status !== 200) {
                 const {detail} = await res.json()
                 setError(detail)
                 throw new Error(detail)
@@ -382,6 +441,8 @@ export default function useModel(modelName, options = {}) {
         update,
         del,
         deleteWithConfirm,
+         exportCSV,
+        importCSV,
         // pagination
         page, setPage,
         pageSize, setPageSize,

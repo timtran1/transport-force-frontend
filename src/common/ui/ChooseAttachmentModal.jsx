@@ -3,7 +3,7 @@ import {
     faUpload,
     faXmark,
     faPenToSquare,
-    faCheckDouble
+    faCheckDouble, faFileLines
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {FileButton, Modal} from "@mantine/core";
@@ -15,7 +15,7 @@ import Button from "./Button.jsx";
 import Checkbox from "./Checkbox.jsx";
 import NotificationState from "../stores/NotificationState.js";
 import BackendHostURLState from "../stores/BackendHostURLState.js";
-import documentIcon from '../../assets/images/document.png';
+import useAuthentication from "../api/useAuthentication.js";
 
 function FileImage({file, onClick, isSelectMode, checked = false}) {
     const {backendHost} = BackendHostURLState((state) => state);
@@ -23,7 +23,7 @@ function FileImage({file, onClick, isSelectMode, checked = false}) {
     return (
         <div
             onClick={onClick}
-            className={`relative hover:outline cursor-pointer hover:outline-2`}
+            className={`relative shadow border-gray-300 border rounded-lg overflow-hidden hover:outline cursor-pointer hover:outline-2`}
         >
             {isSelectMode && (
                 <Checkbox
@@ -41,11 +41,12 @@ function FileImage({file, onClick, isSelectMode, checked = false}) {
                 />
             ) : (
                 <div
-                    className="flex flex-col border items-center h-[150px] p-2"
+                    className="flex items-center justify-center h-[150px] p-2"
                     title={file.name}
                 >
-                    <img src={documentIcon} className="w-[100px]"/>
-                    <div className="mt-2 w-full whitespace-nowrap overflow-hidden text-ellipsis">
+                    <FontAwesomeIcon icon={faFileLines}
+                                     className={`text-[24px] sm:text-[36px] text-primary-main absolute top-2 right-2`}/>
+                    <div className="mt-2 w-full text-sm bg-white rounded p-1 px-2 break-words">
                         {file.name}
                     </div>
                 </div>
@@ -54,19 +55,32 @@ function FileImage({file, onClick, isSelectMode, checked = false}) {
     );
 }
 
-export default function ChooseAttachmentModal({isOpen, close, onChange, type}) {
+export default function ChooseAttachmentModal(props) {
+    const {
+        isOpen,
+        close,
+        onChange,
+        type,
+        filters: initialFilters = [],
+        showPastFiles = true
+    } = props;
     const {t} = useTranslation();
     const scrollRef = useRef();
-    let filters = [];
+    const {user} = useAuthentication();
+    let filters = [...initialFilters, {
+        field: "owner_id",
+        operator: "=",
+        value: user.id
+    }];
+
     if (type === "image") {
-        filters = [
-            {
-                field: "content_type",
-                operator: "like",
-                value: "image%"
-            }
-        ];
+        filters.push({
+            field: "content_type",
+            operator: "like",
+            value: "image%"
+        })
     }
+
     const {
         data: files,
         setData: setFiles,
@@ -75,28 +89,28 @@ export default function ChooseAttachmentModal({isOpen, close, onChange, type}) {
     } = useModel("attachment", {
         pageSize: null,
         filters
-    });
+    })
+
     const {uploadFileModel} = useUpload();
     const [isSelectMode, setIsSelectMode] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState(new Set());
     const {notify} = NotificationState((state) => state);
     const {backendHost} = BackendHostURLState((state) => state);
+
     useEffect(() => {
         if (isOpen) {
             setIsSelectMode(false);
             setSelectedFiles(new Set());
-            const fetchFiles = async () => {
-                await getFiles();
-            };
-            fetchFiles();
+            if (showPastFiles) getFiles();
         }
     }, [isOpen]);
 
-    async function handleFileChange(file) {
+    async function handleFileChange(filesArray) {
         try {
-            if (file) {
-                const newFile = await uploadFileModel("attachment/", file);
-                setFiles([...files, newFile]);
+            if (filesArray) {
+                const newFiles = await uploadFileModel("attachment/", filesArray)
+                const filesUpdated = [...files, ...newFiles];
+                setFiles(filesUpdated);
                 setTimeout(scrollToBottom, 100);
             }
         } catch (err) {
@@ -173,8 +187,8 @@ export default function ChooseAttachmentModal({isOpen, close, onChange, type}) {
         >
             <div className="border-t py-4">
                 {!files.length ? (
-                    <div className="text-center">
-                        {t("No recent file uploads")}
+                    <div className="text-center text-gray-400">
+                        {t("Nothing here yet.")}
                     </div>
                 ) : (
                     <>
@@ -185,8 +199,7 @@ export default function ChooseAttachmentModal({isOpen, close, onChange, type}) {
                                         <span
                                             className={`text-[12px] text-gray-500 mx-2`}
                                         >
-                                            {selectedFiles.size}
-                                            {t("selected")}
+                                            {`${selectedFiles.size} ${t("selected")}`}
                                         </span>
                                         <Button
                                             size={`xs`}
@@ -210,8 +223,8 @@ export default function ChooseAttachmentModal({isOpen, close, onChange, type}) {
                                             className="mr-1 h-3 w-3"
                                         />
                                         {isSelectAll()
-                                            ? "Deselect all"
-                                            : "Select all"}
+                                            ? t("Deselect all")
+                                            : t("Select all")}
                                     </Button>
                                 )}
                                 <Button
@@ -227,7 +240,7 @@ export default function ChooseAttachmentModal({isOpen, close, onChange, type}) {
                                 </Button>
                             </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto my-4 p-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-h-[500px] overflow-y-auto my-4 p-2">
                             {files.map((file, index) => (
                                 <FileImage
                                     key={index}
@@ -249,7 +262,12 @@ export default function ChooseAttachmentModal({isOpen, close, onChange, type}) {
                 <div className="flex justify-center mt-8 w-full">
                     <FileButton
                         onChange={handleFileChange}
-                        accept={type === "image" ? "image/png,image/jpeg" : ""}
+                        accept={type === "image" ?
+                            "image/png,image/jpeg,image/jpg,image/gif,image/svg"
+                            :
+                            ""
+                        }
+                        multiple
                         className={`grow`}
                     >
                         {(props) => (

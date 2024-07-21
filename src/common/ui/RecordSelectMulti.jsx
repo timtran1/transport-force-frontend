@@ -22,12 +22,14 @@ export default function RecordSelectMulti(props) {
         searchFields = ["name"],
         renderOption,
         displayField = "name",
-        pageSize= 5
+        pageSize= 5,
+        filters = []
     } = props;
     const {data, searchTerm, setSearchTerm} = useModel(model, {
         autoFetch: true,
         pageSize,
-        searchFields
+        searchFields,
+        filters
     });
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),

@@ -52,17 +52,17 @@ export default function useUpload() {
     //     }
     // }
 
-    async function uploadFileModel(api, file) {
+    async function uploadFileModel(api, files) {
         try {
             setLoading(true)
             const formData = new FormData();
-            formData.append('file', file)
+            Array.from(files).forEach(file => {
+                formData.append(`files`, file);
+            })
 
             const res = await fetch(`${backendHost}/${api}`, {
                 method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: {Authorization: `Bearer ${token}`,},
                 body: formData
             })
 

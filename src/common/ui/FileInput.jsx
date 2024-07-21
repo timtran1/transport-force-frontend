@@ -18,9 +18,11 @@ export default function FileInput(props) {
         height = 80,
         value,
         onChange,
+        filters = [],
+        showPastFiles = true,
     } = props
 
-    const{backendHost} = BackendHostURLState(state => state)
+    const {backendHost} = BackendHostURLState(state => state)
     const [attachUrl, setAttachUrl] = useState(value || '');
     const [isOpen, {open, close}] = useDisclosure();
 
@@ -108,6 +110,8 @@ export default function FileInput(props) {
                 close={close}
                 onChange={handleFileChange}
                 type={type}
+                filters={filters}
+                showPastFiles={showPastFiles}
             />
         </div>
     )
