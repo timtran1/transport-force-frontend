@@ -322,6 +322,78 @@ export default function useModel(modelName, options = {}) {
         }
     }
 
+    /**
+     * Bulk delete record using query params
+     *
+     * @description If the query parameters are empty, it means there are no any filters for deleting, witch means it will delete all records of this model
+     *
+     * @param queryObject
+     * @param force
+     * @return {Promise<void>}
+     */
+    async function bulkDelete(queryObject = {}, force = false) {
+        try {
+            setLoading(true);
+            const endpoint = `${backendHost}/${modelName}/bulk_delete${force ? '?force=true' : ''}`;
+            const query = queryObject || {};
+            const headers = {
+                'Content-Type': 'application/json',
+                ...(user?.token && { ['Authorization']: `Bearer ${user.token}` }),
+            };
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(queryObject || query),
+            });
+            if (response.status === 401) return resetAuth();
+            if (response.status !== 200) {
+                const { detail } = await response.json();
+                setError(detail);
+                throw new Error(detail);
+            }
+            setError(null);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    /**
+     * Handle deleting modal confirm
+     *
+     * @description the delete modal always deletes record with id condition
+     * If the list of ids to be deleted is empty, do not do anything to avoid deleting all records
+     *
+     * @param recordIds
+     * @param callback
+     * @param onErr
+     * @return {Promise<void>}
+     */
+    async function handleDeleteConfirm(recordIds = [], callback = () => {}, onErr = () => {}) {
+        try {
+            // return to avoid deleting all records
+            if (!recordIds.length) return;
+
+            setLoading(true);
+            await bulkDelete(
+                {
+                    OR: recordIds.map((id) => ({
+                        field: 'id',
+                        operator: '=',
+                        value: id,
+                    })),
+                },
+                true,
+            );
+            modals.closeAll();
+            if (callback) callback();
+        } catch (e) {
+            if (onErr) return onErr(e);
+            throw e;
+        } finally {
+            setLoading(false);
+        }
+    }
+
     async function deleteWithConfirm(recordIds, callback = null, onErr = null) {
         setLoading(true)
         const res = await fetch(`${backendHost}/util/delete_check/${modelName}/${recordIds.join(',')}`, {
@@ -338,18 +410,7 @@ export default function useModel(modelName, options = {}) {
             title: <span className={`text-2xl font-bold`}>{t('Delete')}</span>,
             centered: true,
             labels: {confirm: t('Delete'), cancel: t('Cancel')},
-            onConfirm: async () => {
-                try {
-                    setLoading(true)
-                    await Promise.all(recordIds.map(id => del(id, true)))
-                    setLoading(false)
-                    modals.closeAll()
-                    if (callback) callback()
-                } catch (e) {
-                    if (onErr) return onErr(e)
-                    throw e
-                }
-            },
+            onConfirm: () => handleDeleteConfirm(recordIds, callback, onErr),
             children:
                 <div>
                     <div className={`mb-2`}>
@@ -440,6 +501,7 @@ export default function useModel(modelName, options = {}) {
         create,
         update,
         del,
+        bulkDelete,
         deleteWithConfirm,
          exportCSV,
         importCSV,
